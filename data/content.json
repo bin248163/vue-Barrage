@@ -1,0 +1,38 @@
+{
+	"status":0,
+	"message":"",
+	"result":[
+	          {
+	        	  "addressId":"101",
+	        	  "person":"大声道",
+	        	  "content":"哈哈哈哈哈哈",
+	        	  "headPortrait":"img/1.jpg"
+	        	 
+	          },
+	          {
+	        	  "addressId":"102",
+	        	  "person":"阿萨德阿萨德",
+	        	  "content":"666",
+	        	  "headPortrait":"img/2.jpg"
+	          },
+	          {
+	        	  "addressId":"103",
+	        	  "person":"阿萨德爱上",
+	        	  "content":"撒范德萨过",
+	        	  "headPortrait":"img/3.jpg"
+	          },
+	          {
+	        	  "addressId":"104",
+	        	  "person":"士大夫是",
+	        	  "content":"阿斯钢实得",
+	        	  "headPortrait":"img/1.jpg"
+	          },
+	          {
+	        	  "addressId":"105",
+	        	  "person":"士大夫飞",
+	        	  "content":"和对方",
+	        	  "headPortrait":"img/2.jpg"
+	          }
+	          
+	          ]
+}

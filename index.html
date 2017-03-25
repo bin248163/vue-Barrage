@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>仿斗鱼</title>
+		<style type="text/css">
+			*{margin: 0;padding: 0;}
+			input{outline: none;}
+			ul li{list-style-type: none;}
+			.con{padding: 10px;}
+			.con ul li{overflow: hidden;line-height: 30px;font-size: 14px;padding: 10px;background: #0e03b4;border-radius: 3px;margin-top: 10px;}
+			.con ul li span{color: #ff6700;display: block;font-size: 16px;}
+			.con ul li p{color: #fff;font-size: 20px;}
+			#tc{position: absolute;width: 100%;height: 100%;left: 0;top: 0;}
+			#tc div{position: absolute;text-overflow:ellipsis; white-space:nowrap; overflow:hidden;padding: 5px 15px;line-height: 25px;border-radius: 35px;color: #fff;}
+			.xz{animation:rotate 20s infinite linear;}
+			.y{animation:y 2s infinite linear;}
+			.y1{animation:y1 2s infinite linear;}
+			@-moz-keyframes rotate{
+            	0%{-moz-transform:rotate(0deg);}
+            	100%{-moz-transform:rotate(360deg);}
+          	}
+          	@-webkit-keyframes rotate{
+            	0%{-webkit-transform:rotate(0deg);}
+            	100%{-webkit-transform:rotate(360deg);}
+          	}
+          	@keyframes rotate{
+           		0%{transform:rotate(0deg);}
+            	100%{transform:rotate(360deg);}
+          	}
+          	@keyframes y{
+           		0%,100%{width: 100px;height: 100px;}
+           		30%{transform:rotate(0deg);}
+           		45%{transform:rotate(10deg);}
+           		40%{transform:rotate(0deg);}
+           		45%{transform:rotate(-10deg);}
+            	50%{width: 110px;height: 110px;top: 45px;right: 45px;transform:rotate(0deg);}
+            	55%{transform:rotate(-10deg);}
+            	60%{transform:rotate(0deg);}
+            	65%{transform:rotate(10deg);}
+            	70%{transform:rotate(0deg);}
+          	}
+          	@keyframes y1{
+           		0%,100%{width: 80px;height: 80px;}
+           		30%{transform:rotate(0deg);}
+           		45%{transform:rotate(10deg);}
+           		40%{transform:rotate(0deg);}
+           		45%{transform:rotate(-10deg);}
+            	50%{width: 90px;height: 90px;transform:rotate(0deg);margin-top: -45px;margin-left: -45px;}
+            	55%{transform:rotate(-10deg);}
+            	60%{transform:rotate(0deg);}
+            	65%{transform:rotate(10deg);}
+            	70%{transform:rotate(0deg);}
+          	}
+		</style>
+	</head>
+	<body>
+		<div id="app" style="width: 1200px;margin: 40px auto;overflow: hidden;background: #0d00ff;position: relative;">
+			<div style="float: right;width: 850px;border-radius: 3px;height: 700px;overflow: hidden;position: relative;">
+				<div class="xz" style="width: 700px;height: 700px;margin: 0 auto;background-image: url(img/xz.png);background-position: center;background-size: 100% auto;"></div>
+				<div class="y" style="width: 100px;height: 100px;position: absolute;top: 50px;right: 50px;border-radius: 50%;overflow: hidden;background-image: url(img/y.png);background-position: center;background-size: 100% auto;"></div>
+				<div class="y1" style="width: 80px;height: 80px;position: absolute;top: 50%;left: 50%;border-radius: 50%;overflow: hidden;background-image: url(img/y.png);background-position: center;background-size: 100% auto;margin-top: -40px;margin-left: -40px;"></div>
+				<div id="tc"></div>
+			</div>	
+			<div style="float: left;width: 330px;border-radius: 3px;height: 700px;">
+				<div style="height: 630px;overflow: auto;"  id="con">
+					<div class="con" id="con1">
+						<ul>
+							<li v-for="item in addressList">
+								<img v-bind:src="item.headPortrait" alt="" style="width: 60px;height: 60px;float: left;overflow: hidden;border-radius: 50%;"/>
+								<div style="width: calc(100% - 80px);float: right;">
+									<span>{{item.person}}</span>
+									<p>{{item.content}}</p>
+								</div>
+								
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div style="position: absolute;bottom: 10px;left: 0;">
+				<input type="text" name="" id="text" v-model="newPerson.content" value="" placeholder="这里输入聊天内容" style="border: none;border: 1px solid #ff6700;padding:5px;height: 30px;display: block;width: 230px;float: left;border-radius: 3px 0 0 3px;margin:10px 0 0 10px ;"/>
+				<input type="submit"  @click="createPerson" value="发送" style="height: 42px;float: left;background: #ff6700;color: #fff;line-height: 40px;border: 1px solid #ff6700;width: 70px;margin-top: 10px;display: block;cursor: pointer;font-size: 16px;"/>	
+				<input type="submit"  @click="danmu" value="弹幕发送" style="height: 42px;float: left;background: #ff6700;color: #fff;line-height: 40px;border: 1px solid #ff6700;border-radius: 0 3px 3px 0;width: 100px;margin-top: 10px;display: block;cursor: pointer;font-size: 16px;border-left: 1px solid #fff;"/>		
+			</div>
+		</div>
+	</body>
+	<script src="js/vue.js"></script>
+	<script src="http://cdn.bootcss.com/vue-resource/1.2.1/vue-resource.common.js"></script>
+	<script>
+		function $(id){return document.getElementById(id)};
+		new Vue({
+			el: '#app',
+			data: {
+				addressList: [],
+				timer:null,
+        		newarr:[],
+				newPerson: {
+                    person: '消息',
+                    content: '666',
+                    headPortrait:'img/1.jpg'
+                }
+			},
+			mounted: function() {
+				this.$nextTick(function() {
+					this.getAddressList();
+				});
+			},
+			methods: {
+				getAddressList: function() {
+					var _this = this;
+					this.$http.get("data/content.json").then(function(response) {
+						var res = response.data;
+						if(res.status == "0") {
+							_this.addressList = res.result;
+						}
+					});
+				},
+				createPerson: function(){  
+					var _this = this;
+					// 添加完newPerson对象
+                    this.addressList.push(this.newPerson);
+                    // 添加完newPerson对象后，重置newPerson对象
+                    this.newPerson = {person: '消息', content: '666',headPortrait:'img/1.jpg'};
+                    setTimeout(function() {//延时改变滚动条高度
+                    	var div = document.getElementById('con');
+                    	var div1 = document.getElementById('con1');
+                   		div.scrollTop = div1.offsetHeight;
+ 					});
+ 					
+                },
+                danmu: function(){
+                	var _this = this;
+					// 添加完newPerson对象
+                    this.addressList.push(this.newPerson);
+                    // 添加完newPerson对象后，重置newPerson对象
+                    this.newPerson = {person: '消息', content: '666',headPortrait:'img/1.jpg'};
+                    setTimeout(function() {//延时改变滚动条高度
+                    	var div = document.getElementById('con');
+                    	var div1 = document.getElementById('con1');
+                   		div.scrollTop = div1.offsetHeight;
+ 					});
+ 					
+                	//danmu
+ 					var timer=null;
+        			var newarr=[];
+ 					clearInterval(timer);					
+                	var text=$("text").value;
+              		var newnode=document.createElement("div");
+                        newnode.innerHTML="消息：" + text;
+                        newnode.style.top=Math.random()*($("tc").offsetWidth-20)+"px";
+                        newnode.style.left="850px";
+                        //console.log("'"+randomColor()+"'")
+                        newnode.style.background="#"+ this.randomColor();
+                	$("tc").appendChild(newnode);
+                	timer=setInterval(this.move,200);
+                },
+                move: function(){
+                    var arr=$("tc").getElementsByTagName("div");
+                    for(var i=0;i<arr.length;i++){
+                        this.newarr.push(arr[i].offsetLeft);
+                        arr[i].style.left=this.newarr[i]+"px";
+                        this.newarr[i]--
+                        if(this.newarr[i]<0){
+                        	
+                            //this.newarr[i]=600;
+                        }
+                    }
+                    //console.log(j);
+                },
+                randomColor: function() {  
+    				var color = Math.ceil(Math.random( ) * 16777215).toString(16);
+       				while(color.length<6){
+                		color="0"+color;
+                	}
+        			return color;
+        		}
+			}
+		});
+	</script>
+</html>
